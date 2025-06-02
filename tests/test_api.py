@@ -16,66 +16,13 @@ def test_health():
     assert response.json() == {"status": "OK"}
 
 
-# def test_dislike_gesture_prediction():
-#     """Test that the 'dislike' gesture is correctly predicted"""
-#     payload = {
-#         "landmarks": DISLIKE_LANDMARKS
-#     }
-    
-#     response = client.post("/predict-landmark", json=payload)
-    
-#     # Basic response validation
-#     assert response.status_code == 200
-#     response_data = response.json()
-#     assert "gesture" in response_data
-    
-#     # Validate the prediction
-#     assert response_data["gesture"] == "dislike", \
-#         f"Expected 'dislike' gesture but got '{response_data['gesture']}'"
-
-# def test_dislike_gesture_prediction():
-#     """End-to-end test: API call → preprocessing → model prediction → response"""
-#     # 1. Prepare test data (from your dataset)
-#     payload = {
-#         "landmarks": DISLIKE_LANDMARKS  # Your 21 landmarks data
-#     }
-    
-#     # 2. Call the real API endpoint
-#     response = client.post(
-#         "/predict-landmark",
-#         json=payload,
-#         timeout=5.0  # Fail if API hangs
-#     )
-    
-#     # 3. Verify HTTP layer worked
-#     assert response.status_code == 200, \
-#         f"API failed with status {response.status_code}. Response: {response.text}"
-    
-#     # 4. Verify response structure
-#     response_data = response.json()
-#     assert "gesture" in response_data, \
-#         f"Missing 'gesture' key in response. Full response: {response_data}"
-    
-#     # 5. Verify business logic
-#     assert response_data["gesture"] == "dislike", (
-#         f"Prediction mismatch. Expected 'dislike', got '{response_data['gesture']}'. "
-#         "Possible issues:\n"
-#         "- Model was retrained with different labels\n"
-#         "- Preprocessing changed\n"
-#         "- Test data doesn't match training data distribution"
-#     )
-    
-    
-    
 def test_dislike_gesture_prediction():
     """End-to-end test of the prediction API with debug on failure"""
-    # 1. Prepare test data
     payload = {
-        "landmarks": DISLIKE_LANDMARKS  # Your 21-landmark test data
+        "landmarks": DISLIKE_LANDMARKS  
     }
     print("[TEST DEBUG] Starting dislike test")
 
-    # 2. Make API call
     response = client.post(
         "/predict-landmark",
         json=payload,
@@ -112,8 +59,8 @@ def test_dislike_gesture_prediction():
 def test_predict_landmark_invalid_count():
     """Test validation for incorrect landmark count"""
     test_cases = [
-        ([{"x": 0.1, "y": 0.2, "z": 0.3} for _ in range(20)], "20 landmarks"),  # Under
-        ([{"x": 0.1, "y": 0.2, "z": 0.3} for _ in range(22)], "22 landmarks")   # Over
+        ([{"x": 0.1, "y": 0.2, "z": 0.3} for _ in range(20)], "20 landmarks"),  
+        ([{"x": 0.1, "y": 0.2, "z": 0.3} for _ in range(22)], "22 landmarks")   
     ]
     
     for landmarks, description in test_cases:
@@ -123,9 +70,9 @@ def test_predict_landmark_invalid_count():
 def test_predict_landmark_missing_coords():
     """Test validation for malformed landmarks"""
     test_cases = [
-        ([{"x": 0.1, "y": 0.2} for _ in range(21)], "missing z"),              # Missing coordinate
-        ([{"x": "invalid", "y": 0.2, "z": 0.3} for _ in range(21)], "bad type"),  # Wrong type
-        ([{"x": None, "y": 0.2, "z": 0.3} for _ in range(21)], "null value")     # Null value
+        ([{"x": 0.1, "y": 0.2} for _ in range(21)], "missing z"),              
+        ([{"x": "invalid", "y": 0.2, "z": 0.3} for _ in range(21)], "bad type"),  
+        ([{"x": None, "y": 0.2, "z": 0.3} for _ in range(21)], "null value")     
     ]
     
     for landmarks, description in test_cases:

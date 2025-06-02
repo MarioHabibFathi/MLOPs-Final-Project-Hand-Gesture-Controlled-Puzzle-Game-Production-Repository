@@ -161,27 +161,6 @@ def health():
     logger.info("Health check called")
     return {"status": "OK"}
 
-# @app.post("/predict")
-# async def make_prediction(request: Request, delay: float = 0):
-#     REQUEST_COUNT.inc()
-#     try:
-#         with INFERENCE_TIME_HISTOGRAM.time():
-#             data = await request.json()
-#             gesture = predict(model, le, detector, delay=delay)
-#             logger.info(f"Predict called with: {data}")            
-#         return {"gesture": gesture or "No hand detected"}
-#     except Exception as e:
-#         REQUEST_ERRORS.inc()
-#         logger.error(f"Prediction error: {str(e)}")
-#         raise HTTPException(status_code=500, detail="Could not make prediction")
-
-
-
-# @app.get("/latest-gesture")
-# def get_latest_gesture():
-#     logger.info(f"Returning latest gesture: {latest_gesture}")
-#     return {"gesture": latest_gesture() or None}
-
 @app.post("/predict-image")
 async def predict_image(file: UploadFile = File(...), delay: float = 0):
     REQUEST_COUNT.inc()
@@ -236,33 +215,6 @@ async def predict_landmark(request: LandmarkRequest):
             raise HTTPException(status_code=500, detail="Could not make prediction from landmarks")
         
         
-# @app.post("/predict")
-# async def make_prediction(request: Request, delay: float = 0):
-#     REQUEST_COUNT.inc()
-#     try:
-#         with INFERENCE_TIME_HISTOGRAM.time():
-#             cap = cv2.VideoCapture(0)
-#             ret, frame = cap.read()
-#             width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-#             height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-#             cap.release()
-
-#             if not ret:
-#                 raise RuntimeError("Could not capture frame.")
-
-#             gesture = predict(model, le, detector, frame, width, height, delay)
-
-#             data = await request.json()
-#             logger.info(f"Predict called with: {data}")
-#             return {"gesture": gesture or "No hand detected"}
-
-#     except Exception as e:
-#         REQUEST_ERRORS.inc()
-#         logger.error(f"Prediction error: {str(e)}")
-#         raise HTTPException(status_code=500, detail="Could not make prediction")
-
-
-
 
 @app.get("/stream")
 async def stream_predictions(request: Request, delay: float = 1.0):

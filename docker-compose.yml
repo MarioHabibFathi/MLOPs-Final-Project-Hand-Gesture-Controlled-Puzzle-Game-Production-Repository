@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    container_name: ml-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/app  
+    environment:
+      - PYTHONUNBUFFERED=1
+      - RELOAD=1 
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+    depends_on:
+      prometheus:
+        condition: service_started
+    devices:
+      - "/dev/video0:/dev/video0"
+    privileged: true
+    networks:
+      - monitor-net
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - monitor-net
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+    networks:
+      - monitor-net
+
+volumes:
+  grafana-storage:
+
+networks:
+  monitor-net:
